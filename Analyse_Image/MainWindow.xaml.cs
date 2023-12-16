@@ -21,7 +21,9 @@ namespace Analyse_Image
     /// </summary>
     public partial class MainWindow : Window
     {
-        private back.Image? leftImage = null;
+        private back.Image? leftImage  = null;
+        private back.Image? rightImage = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -32,6 +34,8 @@ namespace Analyse_Image
         {
             leftGrid.Children.Clear();
             rightGrid.Children.Clear();
+            leftImage = null;
+            rightImage = null;
         }
 
         private void Open(object sender, RoutedEventArgs e)
@@ -45,10 +49,7 @@ namespace Analyse_Image
             {
                 BitmapImage bitmapImage= new BitmapImage(new Uri(op.FileName));
                 leftImage = new back.Image(bitmapImage, back.ImageType.RGB);
-                Image image = new Image();
-                image.Source = bitmapImage;
-                leftGrid.Children.Clear();
-                leftGrid.Children.Add(image);
+                DisplayAnImageOnTheLeft(leftImage);
             }
         }
         private void Save(object sender, RoutedEventArgs e)
@@ -56,24 +57,54 @@ namespace Analyse_Image
             //TODO
             
         }
-        
+
+        private void Switch(object sender, RoutedEventArgs e)
+        {
+            rightGrid.Children.Clear();
+            DisplayAnImageOnTheLeft(rightImage);
+            rightImage = null;
+
+        }
+
         private void GrayScale(object sender, RoutedEventArgs e)
         {
             if(leftImage != null)
             {
                 back.Image grayImage = leftImage.ToGrayScale();
-                DisplayAnImageOnTheRigth(grayImage);
+                DisplayAnImageOnTheRight(grayImage);
             }
         }
 
-        private void DisplayAnImageOnTheRigth(back.Image imageToDisplay)
+        public void Threshold(object sender, RoutedEventArgs e)
+        {
+            if(leftImage != null && leftImage.ImageType == back.ImageType.GRAY)
+            {
+                int threshold = leftImage.ComputeThreshold();
+                rightImage = leftImage.ToBinaryImage(threshold);
+                DisplayAnImageOnTheRight(rightImage);
+            }
+        }
+
+        private void DisplayAnImageOnTheRight(back.Image? imageToDisplay)
         {
             if (imageToDisplay != null)
             {
                 Image image = new Image();
                 image.Source = imageToDisplay.GetBitMapImage();
+                rightImage = imageToDisplay;
                 rightGrid.Children.Clear();
                 rightGrid.Children.Add(image);
+            }
+        }
+        private void DisplayAnImageOnTheLeft(back.Image? imageToDisplay)
+        {
+            if (imageToDisplay != null)
+            {
+                Image image = new Image();
+                image.Source = imageToDisplay.GetBitMapImage();
+                leftImage = imageToDisplay;
+                leftGrid.Children.Clear();
+                leftGrid.Children.Add(image);
             }
         }
     }

@@ -3,33 +3,119 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
-using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Color = System.Drawing.Color;
 
 namespace Analyse_Image.back
 {
     public class Image
     {
         private Bitmap bitmap;
-        private ImageType image;
+        private ImageType imageType;
+        public ImageType ImageType { get => imageType; set => imageType = value; }
 
         public Image(BitmapImage bitMapImage, ImageType image)
         {
             this.bitmap = BitmapImage2Bitmap(bitMapImage);
-            this.image = image;
+            this.imageType = image;
         }
 
         public Image(Bitmap bitmap, ImageType image)
         {
             this.bitmap = bitmap;
-            this.image = image;
+            this.imageType = image;
+            ComputeThreshold();
+
         }
 
         public BitmapImage GetBitMapImage()
         {
             return Bitmap2BitmapImage(bitmap);
+        }
+
+        public List<int> ComputeGrayHistogramme()
+        {
+            List<int> histogramme = new List<int>(256);
+            for (int i = 0; i < 256; i++)
+            {
+                histogramme.Add(0);
+            }
+
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    //take red value because all components should have the same value in grayscale
+                    Color color = bitmap.GetPixel(i, j);                    
+                    histogramme[color.R] = histogramme[color.R] + 1;
+                }
+            }
+
+            return histogramme;
+        }
+
+        /// <summary>
+        /// Compute the ith statistical moment of the histogram
+        /// </summary>
+        /// <param name="histogramme">Histogram of the image</param>
+        /// <param name="i">The ith statistical moment wanted</param>
+        /// <returns>the ith statistical moment</returns>
+        private long ComputeStatisticalMoment(List<int> histogramme, int i)
+        {
+            long moment = 0;
+            for (int gray = 0; gray < histogramme.Count; gray++)
+            {
+                moment += histogramme[gray] * (long)Math.Pow(gray, i);
+            }
+            return moment / (bitmap.Height * bitmap.Width);
+        } 
+
+        /// <summary>
+        /// Compute automatically the threshold using the statistical moment of the histogram.
+        /// </summary>
+        /// <returns>The threshold of the image</returns>
+        public int ComputeThreshold()
+        {
+            List<int> histogramme = ComputeGrayHistogramme();
+            long m1 = ComputeStatisticalMoment(histogramme, 1);
+            long m2 = ComputeStatisticalMoment(histogramme, 2);
+            long m3 = ComputeStatisticalMoment(histogramme, 3);
+
+            long c1 = (m2*m1 - m3) / (m2 - m1*m1);
+            long c0 = -m2 - c1 * m1;
+
+            long delta = c1*c1 - 4 * c0;
+            long sqrtDelta = (long)Math.Sqrt(delta);
+
+            long x1 = (-c1 + sqrtDelta) / 2;
+            long x2 = (-c1 - sqrtDelta) / 2;
+
+            long threshold = (x1 + x2) / 2;
+            return (int)threshold;
+        }
+
+        public Image ToBinaryImage(int threshold)
+        {
+            Bitmap newBitmap = new Bitmap(bitmap);
+
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    Color color;
+                    if (bitmap.GetPixel(i, j).R < threshold)
+                    {
+                        color = Color.FromArgb(255, 0, 0, 0);
+                    }
+                    else
+                    {
+                        color = Color.FromArgb(255, 255, 255, 255);
+                    }
+                    newBitmap.SetPixel(i, j, color);
+                }
+            }
+            
+            return new Image(newBitmap, ImageType.BINARY);
         }
 
         public Image ToGrayScale()
@@ -61,7 +147,7 @@ namespace Analyse_Image.back
                 BitmapEncoder enc = new BmpBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(bitmapImage));
                 enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                Bitmap bitmap = new Bitmap(outStream);
 
                 return new Bitmap(bitmap);
             }

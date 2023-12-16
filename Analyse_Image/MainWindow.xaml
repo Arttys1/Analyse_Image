@@ -19,7 +19,7 @@
             </ToolBar>
             <ToolBar>
                 <Button Click="GrayScale" Content="GrayScale" />
-                <Button Content="Seuillage" />
+                <Button Click="Threshold" Content="Seuillage" />
             </ToolBar>
             <ToolBar>
                 <Button Content="Addition" />
@@ -38,6 +38,9 @@
             <ToolBar>
                 <Button Content="Lantuejoul" />
                 <Button Content="Aminscissement homotopique" />
+            </ToolBar>
+            <ToolBar>
+                <Button Click="Switch" Content="Switch" />
             </ToolBar>
         </ToolBarTray>
         <Grid>
