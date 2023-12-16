@@ -21,9 +21,37 @@ namespace Analyse_Image.back
             this.image = image;
         }
 
+        public Image(Bitmap bitmap, ImageType image)
+        {
+            this.bitmap = bitmap;
+            this.image = image;
+        }
+
         public BitmapImage GetBitMapImage()
         {
             return Bitmap2BitmapImage(bitmap);
+        }
+
+        public Image ToGrayScale()
+        {
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+            using (Graphics g = Graphics.FromImage(newBitmap))
+            {
+                ColorMatrix colorMatrix = new ColorMatrix(
+                [
+                    [.3f, .3f, .3f, 0, 0],
+                    [.59f, .59f, .59f, 0, 0],
+                    [.11f, .11f, .11f, 0, 0],
+                    [0, 0, 0, 1, 0],
+                    [0, 0, 0, 0, 1]
+                ]);
+
+                using ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(colorMatrix);
+                g.DrawImage(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                            0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, attributes);
+            }
+            return new Image(newBitmap, ImageType.GRAY);    
         }
 
         private Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)

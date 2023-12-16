@@ -18,7 +18,7 @@
                 <Button Click="CloseAll" Content="CloseAll" />
             </ToolBar>
             <ToolBar>
-                <Button Content="GrayScale" />
+                <Button Click="GrayScale" Content="GrayScale" />
                 <Button Content="Seuillage" />
             </ToolBar>
             <ToolBar>

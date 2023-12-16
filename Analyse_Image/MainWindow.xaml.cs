@@ -21,7 +21,7 @@ namespace Analyse_Image
     /// </summary>
     public partial class MainWindow : Window
     {
-        private back.Image leftImage = null;
+        private back.Image? leftImage = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -54,10 +54,24 @@ namespace Analyse_Image
         private void Save(object sender, RoutedEventArgs e)
         {
             //TODO
+            
+        }
+        
+        private void GrayScale(object sender, RoutedEventArgs e)
+        {
             if(leftImage != null)
             {
+                back.Image grayImage = leftImage.ToGrayScale();
+                DisplayAnImageOnTheRigth(grayImage);
+            }
+        }
+
+        private void DisplayAnImageOnTheRigth(back.Image imageToDisplay)
+        {
+            if (imageToDisplay != null)
+            {
                 Image image = new Image();
-                image.Source = leftImage.GetBitMapImage();
+                image.Source = imageToDisplay.GetBitMapImage();
                 rightGrid.Children.Clear();
                 rightGrid.Children.Add(image);
             }
