@@ -1,0 +1,54 @@
+﻿<Window x:Class="Analyse_Image.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Analyse_Image"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="{x:Static SystemParameters.PrimaryScreenHeight}" 
+        Width="{x:Static SystemParameters.PrimaryScreenWidth}" 
+        Top="0"
+        Left="0">
+    <Grid Background="Gray">
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Click="Open" Content="Open" />
+                <Button Click="Save" Content="Save" />
+                <Button Click="CloseAll" Content="CloseAll" />
+            </ToolBar>
+            <ToolBar>
+                <Button Content="GrayScale" />
+                <Button Content="Seuillage" />
+            </ToolBar>
+            <ToolBar>
+                <Button Content="Addition" />
+                <Button Content="Soustraction" />
+            </ToolBar>
+            <ToolBar>
+                <Button Content="Erosion" />
+                <Button Content="Dilatation" />
+                <Button Content="Fermeture" />
+                <Button Content="Ouverture" />
+            </ToolBar>
+            <ToolBar>
+                <Button Content="Aminscissement" />
+                <Button Content="Epaississement" />
+            </ToolBar>
+            <ToolBar>
+                <Button Content="Lantuejoul" />
+                <Button Content="Aminscissement homotopique" />
+            </ToolBar>
+        </ToolBarTray>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="leftGrid" Grid.Column="0"/>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="Black"/>
+            <Grid x:Name="rightGrid" Grid.Column="2"/>
+        </Grid>
+    </Grid>
+</Window>
