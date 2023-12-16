@@ -21,10 +21,10 @@ namespace Analyse_Image
     /// </summary>
     public partial class MainWindow : Window
     {
+        private back.Image leftImage = null;
         public MainWindow()
         {
             InitializeComponent();
-
 
         }
 
@@ -36,7 +36,6 @@ namespace Analyse_Image
 
         private void Open(object sender, RoutedEventArgs e)
         {
-            Button b = sender as Button;
             OpenFileDialog op = new OpenFileDialog();
             op.Title = "Select a picture";
             op.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" +
@@ -44,8 +43,8 @@ namespace Analyse_Image
               "Portable Network Graphic (*.png)|*.png";
             if (op.ShowDialog() == true)
             {
-                b.Content = op.FileName;
                 BitmapImage bitmapImage= new BitmapImage(new Uri(op.FileName));
+                leftImage = new back.Image(bitmapImage, back.ImageType.RGB);
                 Image image = new Image();
                 image.Source = bitmapImage;
                 leftGrid.Children.Clear();
@@ -55,6 +54,13 @@ namespace Analyse_Image
         private void Save(object sender, RoutedEventArgs e)
         {
             //TODO
+            if(leftImage != null)
+            {
+                Image image = new Image();
+                image.Source = leftImage.GetBitMapImage();
+                rightGrid.Children.Clear();
+                rightGrid.Children.Add(image);
+            }
         }
     }
 }
