@@ -125,6 +125,64 @@ namespace Analyse_Image
                 }
             }
         }
+        public void Erosion(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                PopupSelectSize popupSelectSize = new PopupSelectSize();
+                popupSelectSize.ShowDialog();
+                if (popupSelectSize.IsDone == true)
+                {
+                    int size = popupSelectSize.Value;
+                    rightImage = leftImage.Erosion(size);
+                    DisplayAnImageOnTheRight(rightImage);
+                }
+            }
+        }
+        public void Dilatation(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                PopupSelectSize popupSelectSize = new PopupSelectSize();
+                popupSelectSize.ShowDialog();
+                if (popupSelectSize.IsDone == true)
+                {
+                    int size = popupSelectSize.Value;
+                    rightImage = leftImage.Dilatation(size);
+                    DisplayAnImageOnTheRight(rightImage);
+                }
+            }
+        }
+        public void Fermeture(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                PopupSelectSize popupSelectSize = new PopupSelectSize();
+                popupSelectSize.ShowDialog();
+                if (popupSelectSize.IsDone == true)
+                {
+                    int size = popupSelectSize.Value;
+                    rightImage = leftImage.Fermeture(size);
+                    DisplayAnImageOnTheRight(rightImage);
+                }
+            }
+        }
+        public void Ouverture(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                PopupSelectSize popupSelectSize = new PopupSelectSize();
+                popupSelectSize.ShowDialog();
+                if (popupSelectSize.IsDone == true)
+                {
+                    int size = popupSelectSize.Value;
+                    rightImage = leftImage.Ouverture(size);
+                    DisplayAnImageOnTheRight(rightImage);
+                }
+            }
+        }
+
+
 
         private back.Image TranslateStateOfAnImageToTheSameOfAnother(back.Image imageToChange, back.Image imageModel)
         {

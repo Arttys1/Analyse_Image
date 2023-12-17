@@ -31,6 +31,73 @@ namespace Analyse_Image.back
             return Bitmap2BitmapImage(bitmap);
         }
 
+        public Image Erosion(int size)
+        {
+            Bitmap newBitmap = new(bitmap.Width, bitmap.Height);
+            for (int i = size; i < bitmap.Width - size; i++)
+            {
+                for(int j = size; j < bitmap.Height - size; j++)
+                {
+                    bool keepIt = true;
+                    for (int k = -size; k <= size; k++)
+                    {
+                        for (int h = -size; h <= size; h++)
+                        {
+                            Color color = bitmap.GetPixel(i + k, j + h);
+                            keepIt &= (color.R == 255);
+                        }
+                    }
+                    if(keepIt)
+                    {
+                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255, 255));
+                    } else
+                    {
+                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 0, 0, 0));
+                    }
+                }
+            }
+            return new Image(newBitmap, ImageType.BINARY);
+        }
+
+        public Image Dilatation(int size)
+        {
+            Bitmap newBitmap = new(bitmap.Width, bitmap.Height);
+            for (int i = size; i < bitmap.Width - size; i++)
+            {
+                for (int j = size; j < bitmap.Height - size; j++)
+                {
+                    bool keepIt = false;
+                    for (int k = -size; k <= size; k++)
+                    {
+                        for (int h = -size; h <= size; h++)
+                        {
+                            Color color = bitmap.GetPixel(i + k, j + h);
+                            keepIt |= (color.R == 255);
+                        }
+                    }
+                    if (keepIt)
+                    {
+                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255, 255));
+                    }
+                    else
+                    {
+                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 0, 0, 0));
+                    }
+                }
+            }
+            return new Image(newBitmap, ImageType.BINARY);
+        }
+
+        public Image Ouverture(int size)
+        {
+            return Erosion(size).Dilatation(size);
+        }
+
+        public Image Fermeture(int size)
+        {
+            return Dilatation(size).Erosion(size);
+        }
+
         public Image Add(Image image)
         {
             Bitmap bitmap2 = image.bitmap;

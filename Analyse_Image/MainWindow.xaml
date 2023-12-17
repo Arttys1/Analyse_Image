@@ -26,10 +26,10 @@
                 <Button Click="Minus" Content="Soustraction" />
             </ToolBar>
             <ToolBar>
-                <Button Content="Erosion" />
-                <Button Content="Dilatation" />
-                <Button Content="Fermeture" />
-                <Button Content="Ouverture" />
+                <Button Click="Erosion" Content="Erosion" />
+                <Button Click="Dilatation" Content="Dilatation" />
+                <Button Click="Fermeture" Content="Fermeture" />
+                <Button Click="Ouverture" Content="Ouverture" />
             </ToolBar>
             <ToolBar>
                 <Button Content="Aminscissement" />
