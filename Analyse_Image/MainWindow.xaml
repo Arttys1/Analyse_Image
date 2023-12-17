@@ -22,8 +22,8 @@
                 <Button Click="Threshold" Content="Seuillage" />
             </ToolBar>
             <ToolBar>
-                <Button Content="Addition" />
-                <Button Content="Soustraction" />
+                <Button Click="Add" Content="Addition" />
+                <Button Click="Minus" Content="Soustraction" />
             </ToolBar>
             <ToolBar>
                 <Button Content="Erosion" />

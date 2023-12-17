@@ -24,14 +24,66 @@ namespace Analyse_Image.back
         {
             this.bitmap = bitmap;
             this.imageType = image;
-            ComputeThreshold();
-
         }
 
         public BitmapImage GetBitMapImage()
         {
             return Bitmap2BitmapImage(bitmap);
         }
+
+        public Image Add(Image image)
+        {
+            Bitmap bitmap2 = image.bitmap;
+            int width = Math.Min(bitmap.Width, bitmap2.Width);
+            int height = Math.Min(bitmap.Height, bitmap2.Height);
+
+            Bitmap newBitmap = new(width, height);
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    Color color1 = bitmap.GetPixel(i, j);
+                    Color color2 = bitmap2.GetPixel(i, j);
+
+                    int r = Math.Min(color1.R + color2.R, 255);
+                    int g = Math.Min(color1.G + color2.G, 255);
+                    int b = Math.Min(color1.B + color2.B, 255);
+
+                    newBitmap.SetPixel(i, j, Color.FromArgb(255, r, g, b));
+                }
+            }
+
+            return new Image(newBitmap, imageType);
+        }
+
+
+        internal Image Minus(Image image)
+        {
+            Bitmap bitmap2 = image.bitmap;
+            int width = Math.Min(bitmap.Width, bitmap2.Width);
+            int height = Math.Min(bitmap.Height, bitmap2.Height);
+
+            Bitmap newBitmap = new(width, height);
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    Color color1 = bitmap.GetPixel(i, j);
+                    Color color2 = bitmap2.GetPixel(i, j);
+
+                    int r = Math.Max(color1.R - color2.R, 0);
+                    int g = Math.Max(color1.G - color2.G, 0);
+                    int b = Math.Max(color1.B - color2.B, 0);
+
+                    newBitmap.SetPixel(i, j, Color.FromArgb(255, r, g, b));
+                }
+            }
+
+            return new Image(newBitmap, imageType);
+        }
+
 
         public List<int> ComputeGrayHistogramme()
         {

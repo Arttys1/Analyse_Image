@@ -1,11 +1,14 @@
-﻿using Microsoft.Win32;
+﻿using Analyse_Image.popup;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -85,11 +88,66 @@ namespace Analyse_Image
             }
         }
 
+        public void Add(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null)
+            {
+                PopupAdd popupAdd = new PopupAdd();
+                popupAdd.ShowDialog();
+                if (popupAdd.IsDone == true)
+                {
+                    Bitmap bitmap = new Bitmap(popupAdd.FileName);
+                    back.Image imageToAdd = new back.Image(bitmap, back.ImageType.RGB);
+
+                    imageToAdd = TranslateStateOfAnImageToTheSameOfAnother(imageToAdd, leftImage);
+
+                    rightImage = leftImage.Add(imageToAdd);
+                    DisplayAnImageOnTheRight(rightImage);
+                }
+            }
+        }
+
+        public void Minus(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null)
+            {
+                PopupAdd popupAdd = new PopupAdd();
+                popupAdd.ShowDialog();
+                if (popupAdd.IsDone == true)
+                {
+                    Bitmap bitmap = new Bitmap(popupAdd.FileName);
+                    back.Image imageToAdd = new back.Image(bitmap, back.ImageType.RGB);
+
+                    imageToAdd = TranslateStateOfAnImageToTheSameOfAnother(imageToAdd, leftImage);
+
+                    rightImage = leftImage.Minus(imageToAdd);
+                    DisplayAnImageOnTheRight(rightImage);
+                }
+            }
+        }
+
+        private back.Image TranslateStateOfAnImageToTheSameOfAnother(back.Image imageToChange, back.Image imageModel)
+        {
+            back.Image result = imageToChange;
+            //translate image state to gray if leftImage is not rgb
+            if (imageModel.ImageType != back.ImageType.RGB)
+            {
+                result = result.ToGrayScale();
+
+                //translate image state to binary if leftImage is binary
+                if (imageModel.ImageType == back.ImageType.BINARY)
+                {
+                    result = result.ToBinaryImage(result.ComputeThreshold());
+                }
+            }
+            return result;
+        }
+
         private void DisplayAnImageOnTheRight(back.Image? imageToDisplay)
         {
             if (imageToDisplay != null)
             {
-                Image image = new Image();
+                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
                 image.Source = imageToDisplay.GetBitMapImage();
                 rightImage = imageToDisplay;
                 rightGrid.Children.Clear();
@@ -100,7 +158,7 @@ namespace Analyse_Image
         {
             if (imageToDisplay != null)
             {
-                Image image = new Image();
+                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
                 image.Source = imageToDisplay.GetBitMapImage();
                 leftImage = imageToDisplay;
                 leftGrid.Children.Clear();
