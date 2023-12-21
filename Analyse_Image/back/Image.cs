@@ -15,6 +15,11 @@ namespace Analyse_Image.back
         private ImageType imageType;
         public ImageType ImageType { get => imageType; set => imageType = value; }
 
+        public Image(BitmapImage bitMapImage)
+        {
+            this.bitmap = BitmapImage2Bitmap(bitMapImage);
+            this.imageType = AssignTypeImage();
+        }
         public Image(BitmapImage bitMapImage, ImageType image)
         {
             this.bitmap = BitmapImage2Bitmap(bitMapImage);
@@ -337,6 +342,38 @@ namespace Analyse_Image.back
                 bitmapImage.EndInit();
                 return bitmapImage;
             }
+        }
+
+        private ImageType AssignTypeImage()
+        {
+            bool isGrayScale = true;
+            bool isBinary = true;
+
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    Color color = bitmap.GetPixel(i, j);
+                    byte r = color.R;
+                    byte g = color.G;
+                    byte b = color.B;
+
+                    isGrayScale &= (r == b && r == g);
+                    isBinary &= isGrayScale && (r == 255  || r == 0);
+                    if (!isGrayScale && !isBinary) break;
+                }
+                if (!isGrayScale && !isBinary) break;
+            }
+
+            if(isBinary)
+            {
+                return ImageType.BINARY;
+            }
+            if (isGrayScale)
+            {
+                return ImageType.GRAY;
+            }
+            return ImageType.RGB;
         }
 
         // Méthode pour rapidement comparer deux bitmaps, utilise la fonction memcmp

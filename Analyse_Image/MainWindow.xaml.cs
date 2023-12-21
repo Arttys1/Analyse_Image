@@ -51,7 +51,7 @@ namespace Analyse_Image
             if (op.ShowDialog() == true)
             {
                 BitmapImage bitmapImage= new BitmapImage(new Uri(op.FileName));
-                leftImage = new back.Image(bitmapImage, back.ImageType.RGB);
+                leftImage = new back.Image(bitmapImage);
                 DisplayAnImageOnTheLeft(leftImage);
             }
         }
