@@ -36,7 +36,7 @@
                 <Button Content="Epaississement" />
             </ToolBar>
             <ToolBar>
-                <Button Content="Lantuejoul" />
+                <Button Click="Lantuejoul" Content="Lantuejoul" />
                 <Button Content="Aminscissement homotopique" />
             </ToolBar>
             <ToolBar>

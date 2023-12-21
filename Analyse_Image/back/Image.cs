@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 using Color = System.Drawing.Color;
 
@@ -26,6 +27,12 @@ namespace Analyse_Image.back
             this.imageType = image;
         }
 
+        public Image(Image image)
+        {
+            this.bitmap = new Bitmap(image.bitmap);
+            this.imageType = image.imageType;
+        }
+
         public BitmapImage GetBitMapImage()
         {
             return Bitmap2BitmapImage(bitmap);
@@ -34,25 +41,37 @@ namespace Analyse_Image.back
         public Image Erosion(int size)
         {
             Bitmap newBitmap = new(bitmap.Width, bitmap.Height);
-            for (int i = size; i < bitmap.Width - size; i++)
+            for (int i = 0; i < bitmap.Width; i++)
             {
-                for(int j = size; j < bitmap.Height - size; j++)
+                for(int j = 0; j < bitmap.Height; j++)
                 {
-                    bool keepIt = true;
-                    for (int k = -size; k <= size; k++)
-                    {
-                        for (int h = -size; h <= size; h++)
-                        {
-                            Color color = bitmap.GetPixel(i + k, j + h);
-                            keepIt &= (color.R == 255);
-                        }
-                    }
-                    if(keepIt)
-                    {
-                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255, 255));
-                    } else
+                    // Si c'est un pixel en bordure, on le met en noir
+                    if (i < size || i >= bitmap.Width - size
+                    || j < size || j >= bitmap.Height - size)
                     {
                         newBitmap.SetPixel(i, j, Color.FromArgb(255, 0, 0, 0));
+                    }
+                    else
+                    {
+                        bool keepIt = true;
+                        for (int k = -size; k <= size; k++)
+                        {
+                            for (int h = -size; h <= size; h++)
+                            {
+                                Color color = bitmap.GetPixel(i + k, j + h);
+                                keepIt &= (color.R == 255);
+                                if (!keepIt) break;
+                            }
+                            if (!keepIt) break;
+                        }
+                        if (keepIt)
+                        {
+                            newBitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255, 255));
+                        }
+                        else
+                        {
+                            newBitmap.SetPixel(i, j, Color.FromArgb(255, 0, 0, 0));
+                        }
                     }
                 }
             }
@@ -62,26 +81,37 @@ namespace Analyse_Image.back
         public Image Dilatation(int size)
         {
             Bitmap newBitmap = new(bitmap.Width, bitmap.Height);
-            for (int i = size; i < bitmap.Width - size; i++)
+            for (int i = 0; i < bitmap.Width; i++)
             {
-                for (int j = size; j < bitmap.Height - size; j++)
+                for (int j = 0; j < bitmap.Height; j++)
                 {
-                    bool keepIt = false;
-                    for (int k = -size; k <= size; k++)
+                    // Si c'est un pixel en bordure, on recopie l'ancien pixel
+                    if (i < size || i >= bitmap.Width - size
+                    || j < size || j >= bitmap.Height - size)
                     {
-                        for (int h = -size; h <= size; h++)
-                        {
-                            Color color = bitmap.GetPixel(i + k, j + h);
-                            keepIt |= (color.R == 255);
-                        }
-                    }
-                    if (keepIt)
-                    {
-                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255, 255));
+                        newBitmap.SetPixel(i, j, bitmap.GetPixel(i, j));
                     }
                     else
                     {
-                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 0, 0, 0));
+                        bool keepIt = false;
+                        for (int k = -size; k <= size; k++)
+                        {
+                            for (int h = -size; h <= size; h++)
+                            {
+                                Color color = bitmap.GetPixel(i + k, j + h);
+                                keepIt |= (color.R == 255);
+                                if (keepIt) break;
+                            }
+                            if (keepIt) break;
+                        }
+                        if (keepIt)
+                        {
+                            newBitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255, 255));
+                        }
+                        else
+                        {
+                            newBitmap.SetPixel(i, j, Color.FromArgb(255, 0, 0, 0));
+                        }
                     }
                 }
             }
@@ -97,6 +127,28 @@ namespace Analyse_Image.back
         {
             return Dilatation(size).Erosion(size);
         }
+
+        public Image Lantuejoul()
+        {
+            Image squelette = new Image(new Bitmap(bitmap.Width, bitmap.Height), ImageType.BINARY);
+            Image lastSquelette = new(squelette);
+
+            //n = 0, erode(X, 0) = X
+            squelette = Minus(Ouverture(1));
+
+            int n = 1;
+            while (!CompareMemCmp(squelette.bitmap, lastSquelette.bitmap))
+            {
+                Image erode = Erosion(n);
+                Image openErode = new Image(erode).Ouverture(1);
+                Image res = erode.Minus(openErode);
+                lastSquelette = new(squelette);
+                squelette = squelette.Add(res);
+                n++;
+            }
+
+            return squelette;
+        }        
 
         public Image Add(Image image)
         {
@@ -284,6 +336,34 @@ namespace Analyse_Image.back
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.EndInit();
                 return bitmapImage;
+            }
+        }
+
+        // Méthode pour rapidement comparer deux bitmaps, utilise la fonction memcmp
+        [DllImport("msvcrt.dll")]
+        private static extern int memcmp(IntPtr b1, IntPtr b2, long count);
+        public static bool CompareMemCmp(Bitmap b1, Bitmap b2)
+        {
+            if ((b1 == null) != (b2 == null)) return false;
+            if (b1.Size != b2.Size) return false;
+
+            var bd1 = b1.LockBits(new Rectangle(new Point(0, 0), b1.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            var bd2 = b2.LockBits(new Rectangle(new Point(0, 0), b2.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            try
+            {
+                IntPtr bd1scan0 = bd1.Scan0;
+                IntPtr bd2scan0 = bd2.Scan0;
+
+                int stride = bd1.Stride;
+                int len = stride * b1.Height;
+
+                return memcmp(bd1scan0, bd2scan0, len) == 0;
+            }
+            finally
+            {
+                b1.UnlockBits(bd1);
+                b2.UnlockBits(bd2);
             }
         }
     }

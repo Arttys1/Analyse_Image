@@ -182,7 +182,14 @@ namespace Analyse_Image
             }
         }
 
-
+        public void Lantuejoul(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                back.Image squelette = leftImage.Lantuejoul();
+                DisplayAnImageOnTheRight(squelette);
+            }
+        }
 
         private back.Image TranslateStateOfAnImageToTheSameOfAnother(back.Image imageToChange, back.Image imageModel)
         {
