@@ -344,6 +344,11 @@ namespace Analyse_Image.back
             }
         }
 
+        public void Save(string filename)
+        {
+            bitmap.Save(filename, ImageFormat.Png);
+        }
+
         private ImageType AssignTypeImage()
         {
             bool isGrayScale = true;

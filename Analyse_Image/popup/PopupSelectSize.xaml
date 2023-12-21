@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Fenetre de selection de valeur" Height="163" Width="244">
     <Grid>
-        <Slider HorizontalAlignment="Left" Margin="30,64,0,0" VerticalAlignment="Top" Width="181" Maximum="1000" Value="1" SmallChange="1" ValueChanged="SliderChangeValue" LargeChange="10" IsSnapToTickEnabled="True" TickFrequency="1"/>
+        <Slider HorizontalAlignment="Left" Margin="30,64,0,0" VerticalAlignment="Top" Width="181" Maximum="10" Value="1" SmallChange="1" ValueChanged="SliderChangeValue" LargeChange="10" IsSnapToTickEnabled="True" TickFrequency="1"/>
         <TextBox x:Name="ValueTextBox" HorizontalAlignment="Left" Margin="30,41,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="181" PreviewTextInput="NumberValidationTextBox"/>
         <Label Content="Selectionnez une valeur" HorizontalAlignment="Left" Margin="30,10,0,0" VerticalAlignment="Top" Width="181"/>
         <Button Content="Selection" HorizontalAlignment="Left" Margin="55,90,0,0" VerticalAlignment="Top" Click="Done"/>

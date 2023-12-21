@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,8 +58,16 @@ namespace Analyse_Image
         }
         private void Save(object sender, RoutedEventArgs e)
         {
-            //TODO
-            
+            if (rightImage != null)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = "Images|*.png";;
+                bool ?ok = dialog.ShowDialog();
+                if (ok != null && (bool)ok)
+                {
+                    rightImage.Save(dialog.FileName);
+                }
+            }
         }
 
         private void Switch(object sender, RoutedEventArgs e)
@@ -71,7 +80,7 @@ namespace Analyse_Image
 
         private void GrayScale(object sender, RoutedEventArgs e)
         {
-            if(leftImage != null)
+            if(leftImage != null && leftImage.ImageType == back.ImageType.RGB)
             {
                 back.Image grayImage = leftImage.ToGrayScale();
                 DisplayAnImageOnTheRight(grayImage);
