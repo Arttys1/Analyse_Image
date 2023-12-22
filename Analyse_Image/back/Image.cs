@@ -196,6 +196,7 @@ namespace Analyse_Image.back
 
             return res;
         }
+
         private Image TranformationDeVoisinage(int[][] voisinage)
         {
             Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
@@ -336,8 +337,7 @@ namespace Analyse_Image.back
             return new Image(newBitmap, imageType);
         }
 
-
-        internal Image Minus(Image image)
+        public Image Minus(Image image)
         {
             Bitmap bitmap2 = image.bitmap;
             int width = Math.Min(bitmap.Width, bitmap2.Width);
@@ -362,7 +362,6 @@ namespace Analyse_Image.back
 
             return new Image(newBitmap, imageType);
         }
-
 
         public List<int> ComputeGrayHistogramme()
         {
