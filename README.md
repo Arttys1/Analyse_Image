@@ -18,4 +18,4 @@ Les fonctionnalités du logiciels sont :
 
 ## Rendu visuel
 
-![image](https://github.com/Arttys1/Analyse_Image/images/rendu_visuel.png)
+![image](https://github.com/Arttys1/Analyse_Image/blob/main/images/rendu_visuel.png)
