@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -174,17 +175,30 @@ namespace Analyse_Image.back
             Image res = new Image(this);
             for (int i = 0; i < 8; i++)
             {
-                Image transformationDeVoisinage = res.TranformationDeVoisinageParL(i);
+                int[][] voisinage = getVoisinageL(i);
+                Image transformationDeVoisinage = res.TranformationDeVoisinage(voisinage);
                 res = res.Minus(transformationDeVoisinage);
             }
 
             return res;
         }
 
-        private Image TranformationDeVoisinageParL(int configuration)
+        public Image Epaississement()
+        {
+            Image res = new Image(this);
+            for (int i = 0; i < 8; i++)
+            {
+                int[][] voisinage = getVoisinageL(i);
+                voisinage[1][1] = 0;
+                Image transformationDeVoisinage = res.TranformationDeVoisinage(voisinage);
+                res = res.Add(transformationDeVoisinage);
+            }
+
+            return res;
+        }
+        private Image TranformationDeVoisinage(int[][] voisinage)
         {
             Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
-            int[][] voisinage = getVoisinageL(configuration);
 
             for (int i = 0; i < bitmap.Width; i++)
             {
@@ -527,7 +541,7 @@ namespace Analyse_Image.back
         private static extern int memcmp(IntPtr b1, IntPtr b2, long count);
         public static bool CompareMemCmp(Bitmap b1, Bitmap b2)
         {
-            if ((b1 == null) != (b2 == null)) return false;
+            if ((b1 == null) || (b2 == null)) return false;
             if (b1.Size != b2.Size) return false;
 
             var bd1 = b1.LockBits(new Rectangle(new Point(0, 0), b1.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);

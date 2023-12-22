@@ -200,6 +200,15 @@ namespace Analyse_Image
             }
         }
 
+        private void Epaississement(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                rightImage = leftImage.Epaississement();
+                DisplayAnImageOnTheRight(rightImage);
+            }
+        }
+
         private void AminscissementHomotopique(object sender, RoutedEventArgs e)
         {
             if(leftImage != null && leftImage.ImageType == back.ImageType.BINARY)

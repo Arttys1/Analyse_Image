@@ -33,7 +33,7 @@
             </ToolBar>
             <ToolBar>
                 <Button Click="Aminscissement" Content="Aminscissement" />
-                <Button Content="Epaississement" />
+                <Button Click="Epaississement" Content="Epaississement" />
             </ToolBar>
             <ToolBar>
                 <Button Click="Lantuejoul" Content="Lantuejoul" />
