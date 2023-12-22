@@ -155,6 +155,147 @@ namespace Analyse_Image.back
             return squelette;
         }        
 
+        public Image AminscissementHomotopique()
+        {
+            Image squelette = new Image(this);
+            Image lastSquelette;
+
+            do
+            {
+                lastSquelette = new(squelette);
+                squelette = squelette.Aminscissement();
+            } while (!CompareMemCmp(squelette.bitmap, lastSquelette.bitmap));
+
+            return squelette;
+        }
+
+        public Image Aminscissement()
+        {
+            Image res = new Image(this);
+            for (int i = 0; i < 8; i++)
+            {
+                Image transformationDeVoisinage = res.TranformationDeVoisinageParL(i);
+                res = res.Minus(transformationDeVoisinage);
+            }
+
+            return res;
+        }
+
+        private Image TranformationDeVoisinageParL(int configuration)
+        {
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+            int[][] voisinage = getVoisinageL(configuration);
+
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    bool keepIt = true;
+                    for (int z = -1; z <= 1; z++)
+                    {
+                        for (int w = -1; w <= 1; w++)
+                        {
+                            int pixelColor;
+
+                            if (i == 0 || i == bitmap.Width - 1 || j == 0 || j == bitmap.Height - 1)
+                            {
+                                pixelColor = 0;
+                            }
+                            else
+                            {
+                                pixelColor = bitmap.GetPixel(i + z, j + w).R;
+                            }
+
+
+                            int value = voisinage[z + 1][w + 1];
+                            if (value != -1)
+                            {
+                                keepIt &= (value * 255 == pixelColor);
+                                if (!keepIt) break;
+                            }
+                        }
+                        if (!keepIt) break;
+
+                    }
+
+                    if (keepIt)
+                    {
+                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255, 255));
+                    }
+                    else
+                    {
+                        newBitmap.SetPixel(i, j, Color.FromArgb(255, 0, 0, 0));
+
+                    }
+                }
+
+            }
+
+
+            return new Image(newBitmap, ImageType.BINARY);
+        }
+
+        private int[][] getVoisinageL(int configuration) {
+            int[][] voisinage = new int[3][];
+            const int n = -1; //unknown point
+
+            switch (configuration)
+            {
+                case 0:
+                    voisinage = [
+                        [1, 1, 1],
+                        [n, 1, n],
+                        [0, 0, 0]];
+                    break;
+                case 1:
+                    voisinage = [
+                        [n, 1, 1],
+                        [0, 1, 1],
+                        [0, 0, n]];
+                    break;
+                case 2:
+                    voisinage = [
+                        [0, n, 1],
+                        [0, 1, 1],
+                        [0, n, 1]];
+                    break;
+                case 3:
+                    voisinage = [
+                        [0, 0, n],
+                        [0, 1, 1],
+                        [n, 1, 1]];
+                    break;
+                case 4:
+                    voisinage = [
+                        [0, 0, 0],
+                        [n, 1, n],
+                        [1, 1, 1]];
+                    break;
+                case 5:
+                    voisinage = [
+                        [n, 0, 0],
+                        [1, 1, 0],
+                        [1, 1, n]];
+                    break;
+                case 6:
+                    voisinage = [
+                        [1, n, 0],
+                        [1, 1, 0],
+                        [1, n, 0]];
+                    break;
+                case 7:
+                    voisinage = [
+                        [1, 1, n],
+                        [1, 1, 0],
+                        [n, 0, 0]];
+                    break;
+                default:
+                    throw new Exception("Configuration should be between 0 and 7");
+            }
+
+            return voisinage;
+        }
+
         public Image Add(Image image)
         {
             Bitmap bitmap2 = image.bitmap;

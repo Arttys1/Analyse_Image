@@ -32,12 +32,12 @@
                 <Button Click="Ouverture" Content="Ouverture" />
             </ToolBar>
             <ToolBar>
-                <Button Content="Aminscissement" />
+                <Button Click="Aminscissement" Content="Aminscissement" />
                 <Button Content="Epaississement" />
             </ToolBar>
             <ToolBar>
                 <Button Click="Lantuejoul" Content="Lantuejoul" />
-                <Button Content="Aminscissement homotopique" />
+                <Button Click="AminscissementHomotopique" Content="Aminscissement homotopique" />
             </ToolBar>
             <ToolBar>
                 <Button Click="Switch" Content="Switch" />

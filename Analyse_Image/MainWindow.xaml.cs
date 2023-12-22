@@ -191,6 +191,24 @@ namespace Analyse_Image
             }
         }
 
+        private void Aminscissement(object sender, RoutedEventArgs e)
+        {
+            if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                rightImage = leftImage.Aminscissement();
+                DisplayAnImageOnTheRight(rightImage);
+            }
+        }
+
+        private void AminscissementHomotopique(object sender, RoutedEventArgs e)
+        {
+            if(leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
+            {
+                rightImage = leftImage.AminscissementHomotopique();
+                DisplayAnImageOnTheRight(rightImage);
+            }
+        }
+
         public void Lantuejoul(object sender, RoutedEventArgs e)
         {
             if (leftImage != null && leftImage.ImageType == back.ImageType.BINARY)
