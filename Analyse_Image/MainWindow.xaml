@@ -32,7 +32,7 @@
                 <Button Click="Ouverture" Content="Ouverture" />
             </ToolBar>
             <ToolBar>
-                <Button Click="Aminscissement" Content="Aminscissement" />
+                <Button Click="Aminscissement" Content="Amincissement" />
                 <Button Click="Epaississement" Content="Epaississement" />
             </ToolBar>
             <ToolBar>
